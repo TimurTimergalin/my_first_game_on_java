@@ -218,7 +218,6 @@ public class LevelGenerator {
                 }
             }
         }
-        System.out.println(new Level(map));
     }
 
     private static void addRooms(int x0, int y0) {
