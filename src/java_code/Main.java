@@ -1,3 +1,5 @@
+package java_code;
+
 import java_code.level_generation.Level;
 import java_code.level_generation.LevelGenerator;
 import java_code.level_generation.RoomType;
