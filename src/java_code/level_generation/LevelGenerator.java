@@ -155,15 +155,7 @@ public class LevelGenerator {
     }
 
     private static void populateTo(int x0, int y0, int x1, int y1, RoomType type) {
-        System.out.println(x0 + " " + y0 + " " + x1 + " " + y1);
         int[][] rMap = rangeMap(x0, y0);
-        for (int[] i : rMap) {
-            for (int j : i) {
-                System.out.print(j + "\t");
-            }
-            System.out.println();
-        }
-        System.out.println("\n");
 
         Pair<Integer> cur = new Pair<>(x1, y1);
         Pair<Integer> goal = new Pair<>(x0, y0);
