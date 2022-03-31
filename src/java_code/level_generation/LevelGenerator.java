@@ -13,10 +13,21 @@ public class LevelGenerator {
     private static int newId = 0;
     private static Random randomGen;
     private static Set<Pair<Integer>> usedCords = new HashSet<>();
+    private static int maxRange;
+
+    public static int getMaxRange() {
+        return maxRange;
+    }
+
+    public static void setMaxRange(int maxRange) {
+        if (maxRange <= 0) throw new IllegalArgumentException();
+        LevelGenerator.maxRange = maxRange;
+    }
 
     private static class Maths {
-        private static int gauss(double center, double width) {
-            return (int) (randomGen.nextGaussian() * width + center - (width - 1) / 2);
+        private static int gauss(double center, double min) {
+            int res = Math.max((int) ((randomGen.nextGaussian() - 0.5) * 2 + center), (int) min);
+            return Math.min(res, maxRange);
         }
 
         private static int rangeBetweenTiles(int x0, int y0, int x1, int y1) {
@@ -45,7 +56,12 @@ public class LevelGenerator {
         }
 
         private static Pair<Integer> chooseRandomOnRange(int x, int y, int range) {
-            int dx = randomGen.nextInt(range - 1) + 1;
+            int dx;
+            try {
+                dx = randomGen.nextInt(range - 1) + 1;
+            } catch (IllegalArgumentException e) {
+                dx = 1;
+            }
             boolean dxn = randomGen.nextBoolean();
             if (dxn) {
                 dx *= -1;
@@ -115,6 +131,24 @@ public class LevelGenerator {
         roomsToGenerate--;
     }
 
+    private static boolean hasNeighbors(int x, int y) {
+        Room cur;
+        for (Pair<Integer> i: Maths.neighbors(x, y)) {
+            if (!Maths.inBorder(i)) {
+                continue;
+            }
+            cur = map[i.get(0)][i.get(1)];
+            if (cur != null && cur.type != RoomType.START_ROOM) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasNeighbors(Pair<Integer> p) {
+        return hasNeighbors(p.get(0), p.get(1));
+    }
+
     private static int[][] rangeMap(int x0, int y0) {
         int[][] res = new int[mapSize][mapSize];
 
@@ -177,28 +211,37 @@ public class LevelGenerator {
             }
 
             for (Pair<Integer> i : Maths.neighbors(curX, curY)) {
+                if (!Maths.inBorder(i)) {continue;}
                 if (rMap[i.get(0)][i.get(1)] < curVal) {
                     cur = i;
                     break;
                 }
             }
         }
+        System.out.println(new Level(map));
     }
 
     private static void addRooms(int x0, int y0) {
         Queue<Pair<Integer>> cordsQueue = new LinkedList<>();
         while (roomsToGenerate > 0) {
-            cordsQueue.add(new Pair<>(x0, y0));
+            cordsQueue.addAll(Arrays.asList(Maths.neighbors(x0, y0)));
 
             Pair<Integer> cur;
             int curX;
             int curY;
+            Room curRoom;
             while (!cordsQueue.isEmpty() && roomsToGenerate > 0) {
                 cur = cordsQueue.poll();
                 curX = cur.get(0);
                 curY = cur.get(1);
+                curRoom = map[curX][curY];
                 if (!areValidCords(cur)) {
-                    continue;
+                    if (curRoom == null) {
+                        continue;
+                    }
+                    if (curRoom.type != RoomType.USUAL_ROOM) {
+                        continue;
+                    }
                 }
                 if (!Maths.inBorder(curX, curY)) {
                     continue;
@@ -249,13 +292,20 @@ public class LevelGenerator {
             int range;
             Pair<Double> cw;
             Pair<Integer> roomCords;
+            int counter = 0;
             for (RoomType type : reqRooms.keySet()) {
                 cw = reqRooms.get(type);
                 range = Maths.gauss(cw.get(0), cw.get(1));
                 roomCords = Maths.chooseRandomOnRange(originX, originY, range);
 
-                while (!areValidCords(roomCords)) {
+                while (!areValidCords(roomCords) || hasNeighbors(roomCords)) {
                     roomCords = Maths.chooseRandomOnRange(originX, originY, range);
+                    counter++;
+
+                    if (counter > 5) {
+                        range++;
+                        counter = 0;
+                    }
                 }
                 populateTo(roomCords.get(0), roomCords.get(1), originX, originY, type);
                 usedCords.add(roomCords);
