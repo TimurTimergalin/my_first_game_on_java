@@ -1,5 +1,7 @@
 package java_code.level_generation;
 
+import java_code.level_generation.room_content.RoomContent;
+import java_code.level_generation.room_content.RoomContentType;
 import java_code.misc.Pair;
 
 import java.util.*;
@@ -88,7 +90,7 @@ public class LevelGenerator {
     private static boolean areValidCords(Pair<Integer> el) {
         for (Pair<Integer> i : usedCords) {
             Room r = map[el.get(0)][el.get(1)];
-            if (r != null && r.content.type == RoomType.START_ROOM) {
+            if (r != null && r.type == RoomType.START_ROOM) {
                 continue;
             }
             if (i.equals(el) || Maths.areNeighbors(el, i)) {
@@ -108,7 +110,7 @@ public class LevelGenerator {
     }
 
     private static void setRoom(int x, int y, RoomType type) {
-        map[x][y] = new Room(newId, RoomContent.randomContent(randomGen, type));
+        map[x][y] = new Room(newId, type, RoomContentType.randomContent(randomGen, type));
         newId++;
         roomsToGenerate--;
     }
@@ -273,6 +275,11 @@ public class LevelGenerator {
     public static Level generateLevel(int mapSize, int minRooms, long seed, Map<RoomType, Pair<Double>> reqRooms) {
         Random r = new Random(seed);
         return generateLevel(mapSize, minRooms, r, reqRooms);
+    }
+
+    public static Level generateLevel(int mapSize, int minRooms, long seed, Map<RoomType, Pair<Double>> reqRooms, boolean safe) {
+        Random r = new Random(seed);
+        return generateLevel(mapSize, minRooms, r, reqRooms, safe);
     }
 
 }

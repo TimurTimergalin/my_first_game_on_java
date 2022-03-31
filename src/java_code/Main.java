@@ -11,15 +11,16 @@ import java.util.Map;
 public class Main {
     public static void main(String[] args) {
         int mapSize = 10;
-        int rooms = 15;
+        int rooms = 25;
 
         Map<RoomType, Pair<Double>> reqs = new HashMap<>();
         reqs.put(RoomType.TREASURE_ROOM, new Pair<>(3.0, 1.0));
         reqs.put(RoomType.BOSS_FIGHT_ROOM, new Pair<>(4.0, 0.8));
+        reqs.put(RoomType.SHOP_ROOM, new Pair<>(4.0, 1.0));
 
-        long seed = 45627176782874L;
+        long seed = 4562717672874L;
 
-        Level lvl = LevelGenerator.generateLevel(mapSize, rooms, seed, reqs);
+        Level lvl = LevelGenerator.generateLevel(mapSize, rooms, seed, reqs, false);
         System.out.println(lvl);
     }
 }
