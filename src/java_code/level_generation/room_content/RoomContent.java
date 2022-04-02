@@ -1,5 +1,6 @@
 package java_code.level_generation.room_content;
 
+import java_code.level_generation.room_content.room_object.RoomObject;
 import java_code.misc.Pair;
 
 import java.util.Map;

@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         int mapSize = 10;
         int rooms = 18;
 
@@ -18,10 +18,10 @@ public class Main {
         reqs.put(RoomType.BOSS_FIGHT_ROOM, new Pair<>(5.0, 3.0));
         reqs.put(RoomType.SHOP_ROOM, new Pair<>(3.0, 2.0));
 
-        long seed = 4562543547572874L;
+        long seed = 45625403547572874L;
 
         LevelGenerator.setMaxRange(5);
-        Level lvl = LevelGenerator.generateLevel(mapSize, rooms, seed, reqs, false);
+        Level lvl = LevelGenerator.generateLevel(mapSize, rooms, seed, reqs, true);
         System.out.println(lvl);
     }
 }

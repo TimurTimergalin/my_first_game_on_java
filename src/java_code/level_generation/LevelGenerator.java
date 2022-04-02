@@ -154,7 +154,7 @@ public class LevelGenerator {
 
         for (int i = 0; i < mapSize; i++) {
             for (int j = 0; j < mapSize; j++) {
-                res[i][j] = mapSize + 1;
+                res[i][j] = mapSize * mapSize + 1;
             }
         }
 
@@ -205,6 +205,10 @@ public class LevelGenerator {
             curX = cur.get(0);
             curY = cur.get(1);
             curVal = rMap[curX][curY];
+
+            if (curVal > maxRange + 3) {
+                throw new RuntimeException();
+            }
 
             if (map[curX][curY] == null) {
                 setRoom(curX, curY, RoomType.USUAL_ROOM);
@@ -315,7 +319,7 @@ public class LevelGenerator {
             return new Level(map);
         } catch (Exception e) {
             if (safe) {
-                return generateLevel(mapSize, minRooms, r, reqRooms, safe);
+                return generateLevel(mapSize, minRooms, LevelGenerator.randomGen, reqRooms, safe);
             }
             throw e;
         }
