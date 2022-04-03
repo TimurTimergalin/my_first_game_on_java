@@ -262,11 +262,7 @@ public class LevelGenerator {
                     if (!areValidCords(i)) {
                         continue;
                     }
-                    if (map[i.get(0)][i.get(1)] == null) {
-                        res = Maths.randomBooleanWithProb(1, 2);
-                    } else {
-                        res = randomGen.nextBoolean();
-                    }
+                    res = Maths.randomBooleanWithProb(3, 1);
                     if (res) {
                         cordsQueue.add(i);
                     }
