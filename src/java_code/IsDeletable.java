@@ -1,6 +1,6 @@
 package java_code;
 
-public interface isDeletable {
+public interface IsDeletable {
     boolean isDeleted();
     void delete();
 }

@@ -1,4 +1,4 @@
-package java_code.event.events;
+package java_code.event;
 
 
 class IllegalCallException extends RuntimeException {

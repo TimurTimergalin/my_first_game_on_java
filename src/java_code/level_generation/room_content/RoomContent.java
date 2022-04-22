@@ -6,8 +6,8 @@ import java_code.misc.Pair;
 import java.util.Map;
 
 public class RoomContent {
-    public static final int ROOM_WIDTH = 20;
-    public static final int ROOM_HEIGHT = 10;
+    public static final int ROOM_WIDTH = 40;
+    public static final int ROOM_HEIGHT = 30;
 
     public final Map<Pair<Integer>, RoomObject> objects;
 

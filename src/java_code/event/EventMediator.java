@@ -1,8 +1,7 @@
 package java_code.event;
 
-import java_code.event.events.ClearDeletedEvent;
-import java_code.event.events.Event;
-import java_code.isDeletable;
+import java_code.main_loop.events.ClearDeletedEvent;
+import java_code.IsDeletable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -31,7 +30,7 @@ class Wrapper implements IEventHandler {
 
     public void handle(Event e) {
         try {
-            if (obj instanceof isDeletable && ((isDeletable) obj).isDeleted()) {
+            if (obj instanceof IsDeletable && ((IsDeletable) obj).isDeleted()) {
                 obj = null;
                 m = null;
             } else
@@ -97,19 +96,21 @@ public class EventMediator {
         private void register(Class<? extends Event> ev, IEventHandler handler, EventPriority priority) {
             MethodMap map = getMapOfPriority(priority);
 
-            Class<? extends Event> cur = ev;
+            Class<? extends Event> cur;
+            Queue<Class<? extends Event>> clsQueue = new LinkedList<>();
+            clsQueue.add(ev);
 
-            Class<?> temp;
-
-            do {
+            while (!clsQueue.isEmpty()) {
+                cur = clsQueue.poll();
                 checkEmpty(cur, map);
 
                 map.get(cur).add(handler);
 
-                temp = cur.getSuperclass();
-                cur = (Class<? extends Event>) temp;
-
-            } while (!cur.equals(Event.class.getSuperclass()));
+                if (cur.getPermittedSubclasses() == null) continue;
+                for (Class<?> cls: cur.getPermittedSubclasses()) {
+                    clsQueue.add((Class<? extends Event>) cls);
+                }
+            }
         }
 
         private List<IEventHandler> getAllHandlersInOrder(Class<? extends Event> key) {
